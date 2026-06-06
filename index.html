@@ -215,6 +215,47 @@
   }
 }
 
+/* Botão Customizado do WhatsApp */
+.btn-whatsapp {
+    display: inline-block;
+    background-color: #25d366;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+    box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+.btn-whatsapp:hover {
+    transform: scale(1.05) translateY(-3px);
+    background-color: #20ba5a;
+}
+
+/* Sistema de Corações Flutuantes no Fundo */
+.floating-heart {
+    position: fixed;
+    bottom: -50px;
+    color: #ff4d6d;
+    font-size: 24px;
+    user-select: none;
+    pointer-events: none;
+    z-index: 1;
+    animation: floatUp 6s linear forwards;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-105vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
     </style>
   </head>
   <body>
@@ -233,14 +274,24 @@
     </audio>
 
     <div id="loader">
-      <div class="spinner"></div>
-      <p id="load-text" style="margin-top: 20px; color: white">
+    <div class="spinner"></div>
+    
+    <!-- TEXTO PRINCIPAL -->
+    <p id="load-text" style="margin-top: 20px; color: white; font-family: sans-serif; font-size: 18px;">
         Sincronizando sentimentos...
-      </p>
-      <button onclick="startExperience()" class="btn-interativo">
+    </p>
+    
+    <!-- O TEMPORIZADOR (Começa em 10) -->
+    <p id="timer" style="color: #ff85a1; font-family: sans-serif; font-size: 24px; font-weight: bold; margin: 10px 0;">
+        10s
+    </p>
+    
+    <!-- BOTÃO (Adicionamos style="display:none" para ele começar escondido) -->
+    <button id="btn-entrar" onclick="startExperience()" class="btn-interativo" style="display: none;">
         Abrir com Amor ❤️
-      </button>
-    </div>
+    </button>
+</div>
+
 
     <div class="wrapper" id="main-wrapper">
       <!-- COLUNA DA ESQUERDA (Substitua as URLs pelas suas fotos do Catbox) -->
@@ -272,14 +323,20 @@
         </div>
 
         <div id="success" class="success-page">
-          <div class="heart-icon">💖</div>
-          <h1 style="color: var(--dark)">Oficialmente Namorados!</h1>
-          <p>
-            Obrigado por fazer parte da minha vida de um jeito tão especial. Te
-            amo, Vitória! 🥰
-          </p>
-        </div>
-      </div>
+    <div class="heart-icon">💖</div>
+    <h1 style="color: var(--dark)">Oficialmente Namorados!</h1>
+    <p>Obrigado por fazer parte da minha vida de um jeito tão especial. Te amo, Vitória! 🥰</p>
+    <p style="font-size: 13px; color: var(--primary); margin-bottom: 20px;">Próximo passo: Comemorar com comida 🍕</p>
+    
+    <!-- BOTÃO DO WHATSAPP (Substitua o número abaixo pelo seu com DDD, ex: 5511999999999) -->
+    <a href="https://wa.me/92984601485" 
+       target="_blank" 
+       class="btn-whatsapp">
+       Me avisar no WhatsApp! 📱
+    </a>
+    </div>
+  </div>
+
 
       <!-- COLUNA DA DIREITA (Substitua as URLs pelas suas fotos do Catbox) -->
       <div class="photo-column" id="photos-right">
@@ -297,6 +354,29 @@
     </div>
 
     <script>
+      // Sistema do Temporizador de Carregamento
+let tempoRestante = 10;
+
+const contagemRegressiva = setInterval(() => {
+    tempoRestante--;
+    
+    // Atualiza o texto dos segundos na tela
+    document.getElementById("timer").innerText = tempoRestante + "s";
+    
+    // Se quiser brincar com os textos enquanto carrega, pode mudar aqui:
+    if (tempoRestante === 7) document.getElementById("load-text").innerText = "Analisando batimentos cardíacos... 💓";
+    if (tempoRestante === 4) document.getElementById("load-text").innerText = "Calculando nível de fofura... 🥰";
+    if (tempoRestante === 1) document.getElementById("load-text").innerText = "Acesso concedido!";
+
+    // Quando o tempo acabar
+    if (tempoRestante <= 0) {
+        clearInterval(contagemRegressiva); // Para o relógio
+        document.getElementById("timer").style.display = "none"; // Esconde o número 0s
+        document.getElementById("btn-entrar").style.display = "block"; // Faz o botão aparecer!
+    }
+}, 1000); // 1000 milissegundos = 1 segundo
+
+
       const story =
         "Há quase 2 anos eu via você e sempre tive vontade de conhecer a pessoa que você é... \n\nAté que hoje deu certo. Hoje você faz parte da minha vida de uma forma especial. As conversas e risadas são infinitamente melhores quando é com você e quando você está perto. \n\nJá faz quase 5 meses que estamos mais juntos do que antes, e há dois meses que te declarei meus sentimentos e o meu coração já te escolheu. \n\nPor isso, Vitória, eu preciso te perguntar... Aceita ser minha namorada?";
 
@@ -369,34 +449,46 @@
       }
 
       function celebrate() {
-        document.getElementById("audioInicio").pause();
-        document
-          .getElementById("audioSucesso")
-          .play()
-          .catch((e) => console.log("Sem áudio sucesso"));
-        document.getElementById("content").style.display = "none";
-        document.getElementById("success").style.display = "block";
-        document.body.style.backgroundColor = "#ffc0cb";
+    document.getElementById("audioInicio").pause();
+    document.getElementById("audioSucesso").play().catch(e => console.log("Sem áudio sucesso"));
+    document.getElementById("content").style.display = "none";
+    document.getElementById("success").style.display = "block";
+    document.body.style.backgroundColor = "#ffc0cb";
 
-        var end = Date.now() + 10 * 1000;
-        (function frame() {
-          confetti({
-            particleCount: 4,
-            angle: 60,
-            spread: 60,
-            origin: { x: 0 },
-            colors: ["#ff85a1", "#ffffff", "#ff0055"],
-          });
-          confetti({
-            particleCount: 4,
-            angle: 120,
-            spread: 60,
-            origin: { x: 1 },
-            colors: ["#ff85a1", "#ffffff", "#ff0055"],
-          });
-          if (Date.now() < end) requestAnimationFrame(frame);
-        })();
-      }
+    // 1. Efeito Inicial dos Confetes (Dura 10 segundos)
+    var end = Date.now() + 10 * 1000;
+    (function frame() {
+      confetti({ particleCount: 4, angle: 60, spread: 60, origin: { x: 0 }, colors: ["#ff85a1", "#ffffff", "#ff0055"] });
+      confetti({ particleCount: 4, angle: 120, spread: 60, origin: { x: 1 }, colors: ["#ff85a1", "#ffffff", "#ff0055"] });
+      if (Date.now() < end) requestAnimationFrame(frame);
+    })();
+
+    // 2. Efeito Contínuo dos Corações Flutuantes (Roda para sempre na tela final)
+    setInterval(() => {
+        const heart = document.createElement("div");
+        heart.classList.add("floating-heart");
+        heart.innerHTML = "❤️";
+        
+        // Posição horizontal aleatória na tela
+        heart.style.left = Math.random() * 100 + "vw";
+        
+        // Tamanhos variados para os corações ficarem dinâmicos
+        const tamanho = Math.random() * 20 + 15; // Entre 15px e 35px
+        heart.style.fontSize = tamanho + "px";
+        
+        // Velocidade de subida aleatória
+        const duracao = Math.random() * 3 + 4; // Entre 4s e 7s
+        heart.style.animationDuration = duracao + "s";
+        
+        document.body.appendChild(heart);
+        
+        // Remove o coração do código após a animação acabar para não travar o celular
+        setTimeout(() => {
+            heart.remove();
+        }, duracao * 1000);
+    }, 400); // Cria um novo coração a cada 400 milissegundos
+}
+
     </script>
   </body>
 </html>
